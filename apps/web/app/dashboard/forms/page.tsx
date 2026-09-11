@@ -43,7 +43,7 @@ export default function FormsPage() {
           Create new form
         </button>
       </div>
-
+//jfr
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
           <div className="w-full max-w-md rounded-lg border border-slate-700 bg-slate-900 p-6 shadow-xl">
