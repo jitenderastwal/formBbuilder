@@ -1,6 +1,7 @@
-import {db,eq} from "@repo/database";
+import { asc, db, eq } from "@repo/database";
 import {formsTable} from "@repo/database/schema";
-import {type CreateFormSchema,createFormSchema, listFormsByUserIdSchema, ListFormsByUserIdSchema} from "./model";
+import { formFieldsTable } from "@repo/database/models/formlist";
+import { type CreateFormSchema, createFormSchema, getPublicFormSchema, listFormsByUserIdSchema, ListFormsByUserIdSchema, type GetPublicFormSchema } from "./model";
 
 
 class FormService {
@@ -33,6 +34,42 @@ class FormService {
       .from(formsTable)
       .where(eq(formsTable.createdBy, userId));
       return result;
+  }
+
+  public async getPublicForm(payload: GetPublicFormSchema) {
+    const { formId } = await getPublicFormSchema.parseAsync(payload);
+
+    const rows = await db
+      .select({
+        form: {
+          id: formsTable.id,
+          title: formsTable.title,
+          description: formsTable.description,
+        },
+        field: {
+          id: formFieldsTable.id,
+          label: formFieldsTable.label,
+          labelKey: formFieldsTable.labelKey,
+          description: formFieldsTable.description,
+          placeholder: formFieldsTable.placeholder,
+          isRequired: formFieldsTable.isRequired,
+          index: formFieldsTable.index,
+          type: formFieldsTable.type,
+        },
+      })
+      .from(formsTable)
+      .leftJoin(formFieldsTable, eq(formFieldsTable.formId, formsTable.id))
+      .where(eq(formsTable.id, formId))
+      .orderBy(asc(formFieldsTable.index));
+
+    if (!rows[0]) {
+      throw new Error("Form not found");
+    }
+
+    return {
+      ...rows[0].form,
+      fields: rows.flatMap(({ field }) => field ? [field] : []),
+    };
   }
 }
 export default FormService;

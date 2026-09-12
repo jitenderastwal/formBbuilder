@@ -1,5 +1,5 @@
 import { protectedProcedure, publicProcedure, router } from "../../trpc";
-import { createFieldInputModel, createFieldOutputModel, CreateFormInputSchema, CreateFormOutputSchema, ListFormsInputSchema, ListFormsOutputSchema, deleteFieldOutputModel, formFieldIdInputModel, formFieldOutputModel, listFormFieldsInputModel, listFormFieldsOutputModel, updateFieldInputModel } from "./model";
+import { createFieldInputModel, createFieldOutputModel, CreateFormInputSchema, CreateFormOutputSchema, getPublicFormInputModel, ListFormsInputSchema, ListFormsOutputSchema, deleteFieldOutputModel, formFieldIdInputModel, formFieldOutputModel, listFormFieldsInputModel, listFormFieldsOutputModel, publicFormOutputModel, updateFieldInputModel } from "./model";
 import FormService from "@repo/services/form";
 import { generatePath } from "../../utils/path-generator";
 import FormFieldService from "@repo/services/form-field";
@@ -38,6 +38,19 @@ export const formsRouter = router({
       })
       return forms;
       }),
+
+    getPublicForm: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/public/forms/{formId}",
+        tags: ["Public Forms"],
+        protect: false,
+      },
+    })
+    .input(getPublicFormInputModel)
+    .output(publicFormOutputModel)
+    .query(async ({ input }) => new FormService().getPublicForm(input)),
 
       createFormField: protectedProcedure
       .meta({

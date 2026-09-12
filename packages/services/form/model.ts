@@ -16,3 +16,9 @@ export const listFormsByUserIdSchema = z.object({
 export type ListFormsByUserIdSchema = z.infer<
   typeof listFormsByUserIdSchema
 >;
+
+export const getPublicFormSchema = z.object({
+  formId: z.string().uuid("Invalid form ID"),
+});
+
+export type GetPublicFormSchema = z.infer<typeof getPublicFormSchema>;

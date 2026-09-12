@@ -126,3 +126,16 @@ export const useListFormFields = (formId?: string) => {
     ...query,
   };
 };
+
+export const useGetPublicForm = (formId?: string) => {
+  const query = trpc.forms.getPublicForm.useQuery(
+    { formId: formId ?? "" },
+    { enabled: Boolean(formId) },
+  );
+
+  return {
+    form: query.data,
+    fields: query.data?.fields ?? [],
+    ...query,
+  };
+};

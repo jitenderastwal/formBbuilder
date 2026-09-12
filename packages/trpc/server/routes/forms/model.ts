@@ -22,6 +22,10 @@ export const ListFormsOutputSchema = z.array(
   }),
 );
 
+export const getPublicFormInputModel = z.object({
+  formId: z.string().uuid("Invalid form ID"),
+});
+
 //form field schemas
 const fieldTypeEnum = z.enum(['TEXT', 'NUMBER', 'EMAIL', 'YES_NO', 'PASSWORD'])
 
@@ -59,6 +63,22 @@ export const createFieldOutputModel = z.object({
   })
 
   export const listFormFieldsOutputModel = z.array(formFieldOutputModel)
+
+  export const publicFormOutputModel = z.object({
+    id: z.string().uuid(),
+    title: z.string(),
+    description: z.string().nullable(),
+    fields: z.array(z.object({
+      id: z.string().uuid(),
+      label: z.string(),
+      labelKey: z.string(),
+      description: z.string().nullable(),
+      placeholder: z.string().nullable(),
+      isRequired: z.boolean(),
+      index: z.string(),
+      type: fieldTypeEnum,
+    })),
+  })
 
   export const formFieldIdInputModel = z.object({
     id: z.string().uuid(),

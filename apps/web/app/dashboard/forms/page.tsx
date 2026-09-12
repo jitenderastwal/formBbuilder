@@ -95,12 +95,22 @@ export default function FormsPage() {
                   {new Date(form.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Link
-                    href={`/dashboard/forms/${form.id}`}
-                    className="rounded-md bg-slate-700 px-3 py-2 text-sm text-white hover:bg-blue-600"
-                  >
-                    Edit / Build
-                  </Link>
+                  <div className="flex justify-end gap-2">
+                    <Link
+                      href={`/forms/${form.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-md border border-slate-600 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+                    >
+                      View public form
+                    </Link>
+                    <Link
+                      href={`/dashboard/forms/${form.id}`}
+                      className="rounded-md bg-slate-700 px-3 py-2 text-sm text-white hover:bg-blue-600"
+                    >
+                      Edit / Build
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
