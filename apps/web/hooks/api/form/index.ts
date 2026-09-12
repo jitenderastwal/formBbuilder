@@ -114,3 +114,15 @@ export const useDeleteFormField = () => {
     ...mutation,
   };
 };
+
+export const useListFormFields = (formId?: string) => {
+  const query = trpc.forms.listFormFields.useQuery(
+    { formId: formId ?? "" },
+    { enabled: Boolean(formId) },
+  );
+
+  return {
+    fields: query.data ?? [],
+    ...query,
+  };
+};

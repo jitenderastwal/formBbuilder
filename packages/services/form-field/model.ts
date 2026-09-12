@@ -13,6 +13,10 @@ export const formFieldIdSchema = z.object({
   id: z.string().uuid('Invalid form field ID'),
 });
 
+export const formIdSchema = z.object({
+  formId: z.string().uuid('Invalid form ID'),
+});
+
 export const updateFormFieldSchema = formFieldIdSchema.extend({
   label: z.string().min(1).max(100).optional(),
   type: z.enum(['TEXT', 'NUMBER', 'EMAIL', 'YES_NO', 'PASSWORD']).optional(),
@@ -28,4 +32,5 @@ export const updateFormFieldSchema = formFieldIdSchema.extend({
 
 export type FormFieldInputSchema = z.infer<typeof formFieldInputSchema>;
 export type FormFieldIdSchema = z.infer<typeof formFieldIdSchema>;
+export type FormIdSchema = z.infer<typeof formIdSchema>;
 export type UpdateFormFieldSchema = z.infer<typeof updateFormFieldSchema>;

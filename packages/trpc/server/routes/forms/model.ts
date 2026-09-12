@@ -54,6 +54,12 @@ export const createFieldOutputModel = z.object({
     updatedAt: z.date().nullable(),
   })
 
+  export const listFormFieldsInputModel = z.object({
+    formId: z.string().uuid(),
+  })
+
+  export const listFormFieldsOutputModel = z.array(formFieldOutputModel)
+
   export const formFieldIdInputModel = z.object({
     id: z.string().uuid(),
   })
@@ -68,9 +74,4 @@ export const createFieldOutputModel = z.object({
     description: z.string().optional(),
     placeholder: z.string().optional(),
     isRequired: z.boolean().optional(),
-  }).refine(
-    ({ label, type, description, placeholder, isRequired }) =>
-      label !== undefined || type !== undefined || description !== undefined ||
-      placeholder !== undefined || isRequired !== undefined,
-    { message: 'At least one field value is required' },
-  )
+  })

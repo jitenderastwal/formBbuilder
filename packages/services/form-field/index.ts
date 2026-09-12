@@ -1,11 +1,13 @@
-import { db, eq, max } from '@repo/database'
+import { asc, db, eq, max } from '@repo/database'
 import { formFieldsTable } from '@repo/database/models/formlist'
 import {
     type FormFieldIdSchema,
     type FormFieldInputSchema,
+    type FormIdSchema,
     type UpdateFormFieldSchema,
     formFieldIdSchema,
     formFieldInputSchema,
+    formIdSchema,
     updateFormFieldSchema,
 } from './model'
 
@@ -60,6 +62,15 @@ class FormFieldService {
     public async getFormField(payload: FormFieldIdSchema) {
         const { id } = await formFieldIdSchema.parseAsync(payload)
         return this.getFieldById(id)
+    }
+
+    public async listFormFields(payload: FormIdSchema) {
+        const { formId } = await formIdSchema.parseAsync(payload)
+        return db
+            .select()
+            .from(formFieldsTable)
+            .where(eq(formFieldsTable.formId, formId))
+            .orderBy(asc(formFieldsTable.index))
     }
 
     public async updateFormField(payload: UpdateFormFieldSchema) {
