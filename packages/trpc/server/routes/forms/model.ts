@@ -22,3 +22,55 @@ export const ListFormsOutputSchema = z.array(
   }),
 );
 
+//form field schemas
+const fieldTypeEnum = z.enum(['TEXT', 'NUMBER', 'EMAIL', 'YES_NO', 'PASSWORD'])
+
+export const createFieldInputModel = z.object({
+    formId: z.string().uuid().describe('UUID of the form'),
+    label: z.string().max(100).describe('Display label for the field'),
+    type: fieldTypeEnum.describe('Type of the field'),
+    description: z.string().optional(),
+    placeholder: z.string().optional(),
+    isRequired: z.boolean().optional().default(false),
+})
+  
+export const createFieldOutputModel = z.object({
+    id: z.string(),
+    labelKey: z.string(),
+    index: z.string(),
+})
+
+  export const formFieldOutputModel = z.object({
+    id: z.string().uuid(),
+    label: z.string(),
+    labelKey: z.string(),
+    description: z.string().nullable(),
+    placeholder: z.string().nullable(),
+    isRequired: z.boolean(),
+    index: z.string(),
+    type: fieldTypeEnum,
+    formId: z.string().uuid().nullable(),
+    createdAt: z.date().nullable(),
+    updatedAt: z.date().nullable(),
+  })
+
+  export const formFieldIdInputModel = z.object({
+    id: z.string().uuid(),
+  })
+
+  export const deleteFieldOutputModel = z.object({
+    id: z.string().uuid(),
+  })
+
+  export const updateFieldInputModel = formFieldIdInputModel.extend({
+    label: z.string().min(1).max(100).optional(),
+    type: fieldTypeEnum.optional(),
+    description: z.string().optional(),
+    placeholder: z.string().optional(),
+    isRequired: z.boolean().optional(),
+  }).refine(
+    ({ label, type, description, placeholder, isRequired }) =>
+      label !== undefined || type !== undefined || description !== undefined ||
+      placeholder !== undefined || isRequired !== undefined,
+    { message: 'At least one field value is required' },
+  )
