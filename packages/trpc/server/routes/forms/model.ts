@@ -26,6 +26,33 @@ export const getPublicFormInputModel = z.object({
   formId: z.string().uuid("Invalid form ID"),
 });
 
+export const createFormSubmissionInputModel = z.object({
+  formId: z.string().uuid("Invalid form ID"),
+  values: z.array(z.object({
+    formFieldId: z.string().uuid("Invalid form field ID"),
+    value: z.string(),
+  })),
+});
+
+export const createFormSubmissionOutputModel = z.object({
+  id: z.string().uuid(),
+});
+
+export const getFormSubmissionsInputModel = z.object({
+  formId: z.string().uuid("Invalid form ID"),
+});
+
+export const getFormSubmissionsOutputModel = z.array(z.object({
+  id: z.string().uuid(),
+  formId: z.string().uuid().nullable(),
+  values: z.array(z.object({
+    formFieldId: z.string().uuid(),
+    value: z.string(),
+  })).nullable(),
+  createdAt: z.date().nullable(),
+  updatedAt: z.date().nullable(),
+}));
+
 //form field schemas
 const fieldTypeEnum = z.enum(['TEXT', 'NUMBER', 'EMAIL', 'YES_NO', 'PASSWORD'])
 

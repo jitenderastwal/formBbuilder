@@ -139,3 +139,25 @@ export const useGetPublicForm = (formId?: string) => {
     ...query,
   };
 };
+
+export const useCreatePublicFormSubmission = () => {
+  const mutation = trpc.forms.createPublicFormSubmission.useMutation();
+
+  return {
+    createSubmissionAsync: mutation.mutateAsync,
+    createSubmission: mutation.mutate,
+    ...mutation,
+  };
+};
+
+export const useGetFormSubmissions = (formId?: string) => {
+  const query = trpc.forms.getFormSubmissions.useQuery(
+    { formId: formId ?? "" },
+    { enabled: Boolean(formId) },
+  );
+
+  return {
+    submissions: query.data ?? [],
+    ...query,
+  };
+};

@@ -9,16 +9,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetPublicForm } from "~/hooks/api/form";
+import { useCreatePublicFormSubmission, useGetPublicForm } from "~/hooks/api/form";
 
 export default function PublicFormPage() {
 	const { "form-id": formId } = useParams<{ "form-id": string }>();
 	const { form, fields, isLoading, isError, error } = useGetPublicForm(formId);
 	const [submitted, setSubmitted] = useState(false);
+	const { createSubmissionAsync, isPending: isSubmitting, error: submissionError } = useCreatePublicFormSubmission();
 
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		setSubmitted(true);
+		const formData = new FormData(event.currentTarget);
+		const values = fields.map((field) => ({
+			formFieldId: field.id,
+			value: String(formData.get(field.labelKey) ?? ""),
+		}));
+
+		try {
+			await createSubmissionAsync({ formId, values });
+			setSubmitted(true);
+		} catch {
+			// The mutation error is rendered below the form.
+		}
 	};
 
 	if (isLoading) {
@@ -77,7 +89,8 @@ export default function PublicFormPage() {
 								})}
 								<div className="flex items-center justify-between gap-4 border-t pt-6">
 									<p className="text-xs text-muted-foreground"><span className="text-destructive">*</span> Required</p>
-									<Button type="submit">Submit response</Button>
+									{submissionError && <p className="text-sm text-destructive">{submissionError.message}</p>}
+									<Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Submitting..." : "Submit response"}</Button>
 								</div>
 							</form>
 						)}

@@ -1,8 +1,9 @@
 import { protectedProcedure, publicProcedure, router } from "../../trpc";
-import { createFieldInputModel, createFieldOutputModel, CreateFormInputSchema, CreateFormOutputSchema, getPublicFormInputModel, ListFormsInputSchema, ListFormsOutputSchema, deleteFieldOutputModel, formFieldIdInputModel, formFieldOutputModel, listFormFieldsInputModel, listFormFieldsOutputModel, publicFormOutputModel, updateFieldInputModel } from "./model";
+import { createFieldInputModel, createFieldOutputModel, CreateFormInputSchema, CreateFormOutputSchema, createFormSubmissionInputModel, createFormSubmissionOutputModel, getFormSubmissionsInputModel, getFormSubmissionsOutputModel, getPublicFormInputModel, ListFormsInputSchema, ListFormsOutputSchema, deleteFieldOutputModel, formFieldIdInputModel, formFieldOutputModel, listFormFieldsInputModel, listFormFieldsOutputModel, publicFormOutputModel, updateFieldInputModel } from "./model";
 import FormService from "@repo/services/form";
 import { generatePath } from "../../utils/path-generator";
 import FormFieldService from "@repo/services/form-field";
+import FormSubmissionService from "@repo/services/form-submission";
 
 const TAGS = ["Form"]; 
 const getPath = generatePath("/forms");
@@ -51,6 +52,35 @@ export const formsRouter = router({
     .input(getPublicFormInputModel)
     .output(publicFormOutputModel)
     .query(async ({ input }) => new FormService().getPublicForm(input)),
+
+    createPublicFormSubmission: publicProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: "/public/forms/{formId}/submissions",
+        tags: ["Public Forms"],
+        protect: false,
+      },
+    })
+    .input(createFormSubmissionInputModel)
+    .output(createFormSubmissionOutputModel)
+    .mutation(async ({ input }) => new FormSubmissionService().createSubmission(input)),
+
+    getFormSubmissions: protectedProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/forms/{formId}/submissions",
+        tags: ["Forms"],
+        protect: true,
+      },
+    })
+    .input(getFormSubmissionsInputModel)
+    .output(getFormSubmissionsOutputModel)
+    .query(async ({ input, ctx }) => new FormSubmissionService().getSubmissionsByFormId({
+      ...input,
+      userId: ctx.user.id,
+    })),
 
       createFormField: protectedProcedure
       .meta({
